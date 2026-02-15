@@ -1,0 +1,35 @@
+name: run-daily
+
+on:
+  schedule:
+    - cron: '0 10 * * *'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: pull code
+      uses: actions/checkout@v3
+
+    - name: install python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.13'
+
+    - name: Instalar bibliotecas
+      run: uv venv --python 3.13 |
+        uv pip install -r requirements.txt
+        source .venv/bin/activate
+
+    - name: get data from last day
+      run: make run last_days=1
+      
+    - name: commit and push changes
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        git add .
+        git commit -m "get new data"
+        git push

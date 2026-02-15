@@ -1,0 +1,5 @@
+pandas
+requests
+ruff
+duckdb
+matplotlib
