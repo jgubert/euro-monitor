@@ -5,4 +5,4 @@ import src.euro_monitor as em
 #print(pprint.pformat(cotation, indent=4))
 
 em.test_dd_create_table_cotation_euro()
-print(em.test_dd_query('select * from cotation'))
+print(em.test_dd_query('select * from bronze.cotation'))

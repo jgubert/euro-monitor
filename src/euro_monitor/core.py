@@ -3,9 +3,12 @@
 from datetime import date, timedelta
 import requests
 from . import helpers
+import logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def get_euro_cotation(date: str = (date.today()-timedelta(days=1)).isoformat()) -> dict:
     try:
+        logging.info(f"get data from https://brasilapi.com.br/api/cambio/v1/cotacao/EUR/{date}")
         response = requests.get(
             f'https://brasilapi.com.br/api/cambio/v1/cotacao/EUR/{date}'
         )

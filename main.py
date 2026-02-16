@@ -18,14 +18,18 @@ def get_data_bronze(last_days: int = 0):
     return True
 
 def run_silver_step():
-    
+    logging.info(f'ETL - running silver step.')
+    logging.info(f'\twrite on table silver.cotation')
     # Cotation
     em.test_dd_query('create or replace table silver.cotation as select distinct * from bronze.cotation')
     
     return True
 
 def run_gold_step():
-
+    logging.info(f'ETL - running gold step.')
+    logging.info(f'\twrite on table gold.cotation')
+    logging.info(f'\twrite on table gold.euro_cotation_oscilation')
+    
     # Cotation
     em.test_dd_query('create or replace table gold.cotation as select distinct * from silver.cotation')
     em.test_dd_query("""create or replace table gold.euro_cotation_oscilation as
@@ -45,6 +49,9 @@ def run_gold_step():
     return True
 
 def export_euro_cotation_to_img():
+    logging.info(f'Output:')
+    logging.info(f'\tgenerating graph of gold.euro_cotation_oscilation.')
+
     df = em.test_dd_query("""
         SELECT
             data,
@@ -75,10 +82,12 @@ def export_euro_cotation_to_img():
     plt.close()
 
 def main(last_days):
+    logging.info(f'Starting process.')
     get_data_bronze(last_days)
     run_silver_step()
     run_gold_step()
     export_euro_cotation_to_img()
+    logging.info(f'Process finish successfully.')
 
 if __name__ == "__main__":
     last_days = 0
