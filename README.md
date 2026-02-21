@@ -25,3 +25,6 @@ get the last X days of euro quotation, run the etl pipeline and plot the graph
 ```
 make run last_days=X
 ```
+
+## Euro Quotation
+![alt text](./img/variacao_ptax.png)
