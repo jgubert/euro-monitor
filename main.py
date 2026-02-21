@@ -7,7 +7,10 @@ import pandas as pd
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
+
 def get_data_bronze(last_days: int = 0):
+    """
+    """
     if last_days == 0:
         logging.info('Bypass the extraction step.')
         return False
@@ -17,13 +20,15 @@ def get_data_bronze(last_days: int = 0):
 
     return True
 
+
 def run_silver_step():
     logging.info(f'ETL - running silver step.')
     logging.info(f'\twrite on table silver.cotation')
     # Cotation
-    em.test_dd_query('create or replace table silver.cotation as select distinct * from bronze.cotation')
+    em.run_dd_query('create or replace table silver.cotation as select distinct * from bronze.cotation')
     
     return True
+
 
 def run_gold_step():
     logging.info(f'ETL - running gold step.')
@@ -31,8 +36,8 @@ def run_gold_step():
     logging.info(f'\twrite on table gold.euro_cotation_oscilation')
     
     # Cotation
-    em.test_dd_query('create or replace table gold.cotation as select distinct * from silver.cotation')
-    em.test_dd_query("""create or replace table gold.euro_cotation_oscilation as
+    em.run_dd_query('create or replace table gold.cotation as select distinct * from silver.cotation')
+    em.run_dd_query("""create or replace table gold.euro_cotation_oscilation as
         SELECT
             a.data,
             a.cotacao_compra AS cotacao_abertura,
@@ -48,11 +53,12 @@ def run_gold_step():
 
     return True
 
+
 def export_euro_cotation_to_img():
     logging.info(f'Output:')
     logging.info(f'\tgenerating graph of gold.euro_cotation_oscilation.')
 
-    df = em.test_dd_query("""
+    df = em.run_dd_query("""
         SELECT
             data,
             cotacao_abertura,
@@ -81,13 +87,15 @@ def export_euro_cotation_to_img():
     plt.savefig("img/variacao_ptax.png", dpi=150)
     plt.close()
 
-def main(last_days):
+
+def etl_euro_cotation(last_days):
     logging.info(f'Starting process.')
     get_data_bronze(last_days)
     run_silver_step()
     run_gold_step()
     export_euro_cotation_to_img()
     logging.info(f'Process finish successfully.')
+
 
 if __name__ == "__main__":
     last_days = 0
@@ -97,4 +105,4 @@ if __name__ == "__main__":
     else:
         logging.info("No parameters provided.")
     
-    main(last_days)
+    etl_euro_cotation(last_days)
