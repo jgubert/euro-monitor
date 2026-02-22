@@ -89,6 +89,12 @@ def export_euro_cotation_to_img():
 
 
 def etl_euro_cotation(last_days):
+    """
+        run the full ETL pipeline.
+        get data and write to bronze schema.
+        dedup and write on silver schema.
+        calculate and write on gold schema.
+    """
     logging.info(f'Starting process.')
     get_data_bronze(last_days)
     run_silver_step()
